@@ -26,16 +26,18 @@ export async function initMainPage() {
       // Создаем карточку фильма (Bootstrap Card)
       filmsHtml += `
             <div class="col-md-12 mb-3"> <!-- Bootstrap column -->
-                <div class="card movie-card h-100"> <!-- h-100 для выравнивания высоты карточек в ряду -->
-                    <img src="${film.film_poster}" class="card-img-top" alt="${film.film_name}" style="height: 300px; object-fit: cover;">
-                    <div class="card-body d-flex flex-column"> <!-- d-flex flex-column для выравнивания кнопки внизу -->
+                <div class="movie-card"> <!-- h-100 для выравнивания высоты карточек в ряду -->
+                    
+                    <div class="card-body"> <!-- d-flex flex-column для выравнивания кнопки внизу -->
+                    <img src="${film.film_poster}" class="movie-card__image" alt="${film.film_name}">
                         <h5 class="card-title">${film.film_name}</h5>
                         <p class="card-text">
                             <strong>Длительность:</strong> ${film.film_duration} мин<br>
                             <strong>Страна:</strong> ${film.film_origin}
                         </p>
-                        <button class="btn btn-primary mt-auto" onclick="alert('Фильм: ${film.film_name}')">Подробнее</button> <!-- Заглушка для кнопки -->
+                        
                     </div>
+                    <button class="btn btn-primary mt-auto" onclick="alert('Фильм: ${film.film_name}')">Подробнее</button> <!-- Заглушка для кнопки -->
                 </div>
             </div>`;
     });
