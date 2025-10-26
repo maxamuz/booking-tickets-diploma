@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Кинотеатр</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <!-- Подключение наших кастомных CSS файлов по БЭМ -->
+    <link rel="stylesheet" href="src/css/styles.css"> <!-- Глобальные стили -->
+    <link rel="stylesheet" href="src/css/blocks/header/header.css"> <!-- Стили хедера -->
+    <link rel="stylesheet" href="src/css/blocks/footer/footer.css"> <!-- Стили футера -->
+    <!-- Добавляйте другие CSS файлы блоков, нужные для админки -->
+</head>
+<body>
+    <div class="container">
+        <header class="border-bottom">
+            <h1>Админ-панель Кинотеатра</h1>
+        </header>
+
+        <main id="admin-content">
+            <p>Загрузка панели управления...</p>
+        </main>
+
+        <footer class="border-top mt-3">
+            <p>&copy; 2025 Кинотеатр. Панель управления.</p>
+        </footer>
+    </div>
+
+    <!-- Подключение Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <!-- Подключение нашего JS файла для админ-части -->
+    <script type="module" src="src/js/pages/adminPage.js"></script>
+</body>
+</html>
