@@ -48,14 +48,6 @@ const netoApi = {
     // Метод для получения всех данных
     fetchAllData: () => request('alldata', 'GET'),
 
-    // Можно добавлять и другие методы здесь по мере необходимости
-    // fetchHalls: () => request('halls', 'GET'),
-    // fetchMovies: () => request('movies', 'GET'),
-    // fetchSessions: () => request('sessions', 'GET'),
-    // createHall: (hallData) => request('halls', 'POST', hallData),
-    // deleteHall: (id) => request(`halls/${id}`, 'DELETE'),
-    // и т.д.
-
     // Включаем универсальную функцию request, если она понадобится напрямую
     request,
 };

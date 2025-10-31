@@ -84,12 +84,20 @@ function getFilteredSeancesForDate(seances, selectedDateStr, halls) {
  * @returns {string} - HTML-код панели.
  */
 function renderDaySelector(days, onClickHandler) {
-  let html =
-    '<div class="day-selector d-flex flex-wrap justify-content-center gap-2 mb-4 p-2 border rounded">'; // Используем Bootstrap классы
-  days.forEach((day, index) => {
-    const isActive = index === 0 ? " active" : ""; // Активируем первый день по умолчанию
-    html += `<button type="button" class="btn btn-outline-primary day-btn${isActive}" data-date="${day.fullDate}">${day.dayName}<br>${day.dateStr}</button>`;
-  });
+  const todayStr = new Date().toISOString().split("T")[0]; // Получаем сегодняшнюю дату
+
+  let html = '<div class="day-selector day-selector-container">';
+
+days.forEach((day, index) => {
+  const isToday = day.fullDate === todayStr; // Проверяем, является ли день сегодняшним
+  const buttonText = isToday ? `Сегодня<br>${day.dayName}<br>${day.dateStr}` : `${day.dayName}<br>${day.dateStr}`; // Формируем текст кнопки
+  const isActive = index === 0 ? " day-btn-active" : ""; // Активируем первый день по умолчанию
+  html += `<button type="button" class="day-btn${isActive}" data-date="${day.fullDate}">${buttonText}</button>`;
+});
+
+// Добавляем кнопку со стрелкой в конец списка
+html += `<button type="button" class="day-btn-more" id="show-more-days">></button>`;
+
   html += "</div>";
   return html;
 }
@@ -115,34 +123,30 @@ function renderMovieCards(films, seances, halls) {
     return "<p>На выбранный день сеансы не найдены.</p>";
   }
 
-  let filmsHtml = '<div class="row">';
-
+  let filmsHtml = '<div class="movies-list">';
+ 
   films.forEach((film) => {
     // Проверяем, есть ли сеансы для этого фильма
     const filmSeances = seancesByFilmId[film.id];
     if (filmSeances && filmSeances.length > 0) {
       filmsHtml += `
-            <div class="col-md-12 mb-3">
+            <div class="movie-item">
                 <div class="movie-card">
                     <img src="${film.film_poster}" class="movie-card__image" alt="${film.film_name}">
-                    <div class="card-body">
-                        <h5 class="card-title">${film.film_name}</h5>
-                        <p class="card-text">
+                    <div class="movie-info">
+                        <h5 class="movie-title">${film.film_name}</h5>
+                        <p class="movie-details">
                             <strong>Длительность:</strong> ${film.film_duration} мин<br>
                             <strong>Страна:</strong> ${film.film_origin}
                         </p>
-                        <div class="mt-auto">
+                        <div class="movie-sessions">
                             <h6>Сеансы:</h6>
                             <div class="seance-times">`;
       // Выводим времена сеансов
       filmSeances.forEach((seance) => {
         const hall = halls.find((h) => h.id === seance.seance_hallid);
         const hallName = hall ? hall.hall_name : "Зал неизвестен";
-        // Если бы дата была доступна в сеансе, мы бы её использовали здесь.
-        // Но так как все сеансы считаются на выбранный день, просто выводим время.
-        // Если это "сегодня", и время прошло (хотя мы уже отфильтровали), можно добавить индикацию.
-        // Но в отфильтрованном списке прошедших не должно быть.
-        filmsHtml += `<span class="badge bg-secondary me-1">${seance.seance_time} (${hallName})</span>`;
+        filmsHtml += `<span class="seance-time">${seance.seance_time} (${hallName})</span>`;
       });
       filmsHtml += `
                             </div>
@@ -153,13 +157,13 @@ function renderMovieCards(films, seances, halls) {
     }
     // Если у фильма нет сеансов, он не отображается
   });
-
+ 
   // Если ни один фильм не имеет сеансов (после фильтрации), отображаем сообщение
-  if (filmsHtml === '<div class="row">') {
+  if (filmsHtml === '<div class="movies-list">') {
     filmsHtml +=
-      '<div class="col-12"><p>На выбранный день фильмы с доступными сеансами не найдены.</p></div>';
+      '<div class="no-movies"><p>На выбранный день фильмы с доступными сеансами не найдены.</p></div>';
   }
-
+ 
   filmsHtml += "</div>";
   return filmsHtml;
 }
@@ -228,8 +232,10 @@ export async function initMainPage() {
       displayFilmsForDay
     );
 
-    // Находим кнопки дней и добавляем обработчики
+    // Находим кнопки дней и кнопку стрелки
     const dayButtons = daySelectorContainer.querySelectorAll(".day-btn");
+    const showMoreButton = daySelectorContainer.querySelector("#show-more-days");
+
     dayButtons.forEach((button) => {
       button.addEventListener("click", (e) => {
         // Убираем активный класс у всех кнопок
@@ -243,13 +249,19 @@ export async function initMainPage() {
       });
     });
 
+    // Добавляем обработчик клика для кнопки стрелки (заглушка)
+    showMoreButton.addEventListener("click", (e) => {
+        console.log('Кнопка "Показать больше дней" нажата. Реализация отложена.');
+        // TODO: Реализовать логику показа/скрытия остальных дней
+    });
+
     // Отображаем фильмы для первого (сегодняшнего) дня по умолчанию
     const todayDateStr = days[0].fullDate;
     console.log(`Отображение фильмов для сегодняшней даты: ${todayDateStr}`);
     displayFilmsForDay(todayDateStr);
   } catch (error) {
     console.error("Ошибка при инициализации главной страницы:", error);
-    moviesContainer.innerHTML = `<div class="alert alert-danger" role="alert">
+    moviesContainer.innerHTML = `<div class="error-message">
             Не удалось загрузить данные. Пожалуйста, обновите страницу или повторите попытку позже.<br>
             <small>Ошибка: ${error.message}</small>
         </div>`;
